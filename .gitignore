@@ -11,4 +11,5 @@ __pycache__/
 state/
 client_secret.json
 oauth_token.json
+*.json
 *.b64
