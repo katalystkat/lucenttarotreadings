@@ -14,7 +14,8 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Decode OAuth client JSON
-        env: { OAUTH_JSON_B64: ${{ secrets.OAUTH_JSON_B64 }} }
+        env: 
+          OAUTH_JSON_B64: ${{ secrets.OAUTH_JSON_B64 }}
         run: |
           mkdir -p state
           echo "$OAUTH_JSON_B64" | base64 -d > state/client_secret.json
