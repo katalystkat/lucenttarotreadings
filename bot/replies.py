@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timezone
 from googleapiclient.errors import HttpError
 
-from common import (
+from .common import (
     youtube_service, ensure_db, get_meta, set_meta, match_card,
     already_replied, record_reply, user_recent_reply, load_card_map,
     render_reply, fetch_latest_video_id, fetch_new_comments

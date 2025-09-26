@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timezone
 from googleapiclient.errors import HttpError
 
-from common import youtube_service, ensure_db, top_card_today, load_card_map, fetch_latest_video_id, update_video_title
+from .common import youtube_service, ensure_db, top_card_today, load_card_map, fetch_latest_video_id, update_video_title
 
 CHANNEL_ID = os.getenv("CHANNEL_ID")
 TARGET_VIDEO_ID = os.getenv("TARGET_VIDEO_ID")  # optional
