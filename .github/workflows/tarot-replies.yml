@@ -1,0 +1,36 @@
+name: tarot-replies
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # every 10 minutes
+  workflow_dispatch: {}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Decode OAuth client JSON
+        env: { OAUTH_JSON_B64: ${{ secrets.OAUTH_JSON_B64 }} }
+        run: |
+          mkdir -p state
+          echo "$OAUTH_JSON_B64" | base64 -d > state/client_secret.json
+
+      - name: Write OAuth token
+        run: |
+          mkdir -p state
+          cat > state/oauth_token.json <<'JSON'
+          ${{ secrets.OAUTH_TOKEN_JSON }}
+          JSON
+
+      - name: Run bot
+        env:
+          OAUTH_JSON_PATH: state/client_secret.json
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          TARGET_VIDEO_ID: ${{ secrets.TARGET_VIDEO_ID }}
+          DAILY_REPLY_BUDGET: "180"
+          PER_RUN_REPLY_CAP: "15"
+        run: python -m bot.replies

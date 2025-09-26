@@ -1,0 +1,35 @@
+name: tarot-title
+on:
+  schedule:
+    - cron: "0 11 * * *"  # daily 11:00 UTC
+  workflow_dispatch: {}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Decode OAuth client JSON
+        env: { OAUTH_JSON_B64: ${{ secrets.OAUTH_JSON_B64 }} }
+        run: |
+          mkdir -p state
+          echo "$OAUTH_JSON_B64" | base64 -d > state/client_secret.json
+
+      - name: Write OAuth token
+        run: |
+          mkdir -p state
+          cat > state/oauth_token.json <<'JSON'
+          ${{ secrets.OAUTH_TOKEN_JSON }}
+          JSON
+
+      - name: Update title
+        env:
+          OAUTH_JSON_PATH: state/client_secret.json
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          TARGET_VIDEO_ID: ${{ secrets.TARGET_VIDEO_ID }}
+          TITLE_PREFIX: "[Daily Tarot] "
+        run: python -m bot.title_update
